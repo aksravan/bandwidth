@@ -1,0 +1,68 @@
+{% extends 'bandwidthcal/base.html' %}
+
+{% block title %}Bandwidth Calculator{% endblock %}
+
+{% block content %}
+
+<div class="container my-2">
+  <h4>Select according to your requirements.</h4>
+  <select class="form-select" name="device" onchange="javascript: handleSelect(this)">
+    {% if currdevice is not None %}
+    <option value="">{{ currdevice }}</option>
+    {% else %}
+    <option value="0">Select Device</option>
+    {% for device in devices %}
+    <option value="{% url 'device' device.device_name %}">{{ device.device_name }}</option>
+    {% endfor %}
+    {% endif %}
+  </select>
+
+  <p class="my-3">If you see any data in table for new customer, first reset it.</p>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" name="btnreset" class="btn btn-secondary" value="Reset">
+  </form>
+
+  <table class="table table-striped my-3">
+    <caption>Selected Devices</caption>
+    <thead>
+      <tr>
+        <th scope="col">S. NO.</th>
+        <th scope="col">Device Name</th>
+        <th scope="col">Required Speed</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in result %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ res.devicename }}</td>
+        <td>{{ res.speed }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <th colspan="3">
+          No device Selected.
+        </th>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p class="my-3">Get total speed.</p>
+
+  <form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" name="btngetspeed" class="btn btn-secondary" value="Get total speed">
+  </form>
+
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  function handleSelect(elm) {
+    window.location = elm.value;
+  }
+</script>
+{% endblock %}
